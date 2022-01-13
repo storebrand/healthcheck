@@ -1,0 +1,20 @@
+# Idea
+.idea
+*.iml
+build-idea
+
+# Eclipse
+.project
+.classpath
+.settings
+build-eclipse
+
+# Gradle
+.gradle
+build-gradle
+out/
+
+**/.DS_Store
+
+# Locally configured repositores for deploy
+repositories.gradle

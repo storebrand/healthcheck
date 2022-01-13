@@ -1,0 +1,115 @@
+/*
+ * Copyright 2022 Storebrand ASA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+allprojects {
+    group = 'com.storebrand'
+    version = '0.3.0-2022-01-13'
+}
+
+subprojects {
+
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    compileJava {
+        options.encoding = 'UTF-8'
+        options.deprecation = true
+        options.incremental = true
+        options.compilerArgs += ['-Werror', '-Xlint:all', '-Xlint:-serial']
+    }
+
+    java {
+        withJavadocJar()
+        withSourcesJar()
+    }
+
+    javadoc {
+        // without the -quiet option, the build fails due to errors&warns
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+
+
+    // Common versions
+    ext {
+        slf4jVersion = '1.7.+'
+        junitVersion = '4.13.2'
+        mockitoVersion = '3.12.0'
+        springVersion = '4.3.30.RELEASE' // Still using Spring 4 as "baseline", but also fully compatible with Spring 5.
+
+        // NOTE: Spring started supporting JUnit Jupiter with the release of Spring 5.0.0.
+        springVersionForJupiter = '5.3.7'
+
+        jacksonVersion = '2.12.4'
+
+        javaxInjectVersion = '1'
+    }
+
+    project.buildDir = 'build-gradle'
+
+    repositories {
+        maven {
+            url "http://artifactory.skagenfondene.no/artifactory/libs-release"
+            allowInsecureProtocol = true
+        }
+        maven {
+            url 'https://repo.maven.apache.org/maven2'
+            name 'Maven Central'
+        }
+    }
+
+    task allDependencies(type: DependencyReportTask) {}
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                pom {
+                    name = 'HealthCheck'
+                    description = 'Health checks for services.'
+                }
+                from components.java
+            }
+        }
+    }
+
+    // ------------------------------------------------
+    // -- Release configuration. The release file is not checked in to version control, and should
+    //    instead be kept locally to configure how to deploy this.
+    if (file("${ rootProject.projectDir }/repositories.gradle").exists()) {
+        apply from: "${ rootProject.projectDir }/repositories.gradle"
+    }
+}
+
+// GradleWrapper version specifier.
+wrapper { gradleVersion = "7.2" }
+
+task test(dependsOn: [
+        ':healthcheck:test',
+        ':healthcheck-annotation:test',
+        ':healthcheck-api:test',
+        ':healthcheck-spring:test',
+        ':healthcheck-scanner:test',
+        ':healthcheck-output:test',
+        ':healthcheck-test:test'])
+task verifyAll(dependsOn: [test])
+
+def sizeToString(long size) {
+    "${sprintf '%,d', size} B = ${sprintf '%,.3f', size/(1024*1024d)} MB"
+}
