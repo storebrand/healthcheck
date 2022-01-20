@@ -16,7 +16,7 @@
 
 allprojects {
     group = 'com.storebrand'
-    version = '0.3.0-2022-01-13'
+    version = '0.3.0-SNAPSHOT'
 }
 
 subprojects {
