@@ -181,17 +181,12 @@ public class HealthCheckInstance implements CheckSpecification {
         }
 
         // TODO: Remove this when INTERNAL_INCONSISTENCY is removed
-        List<Axis> specifiedAxes = new ArrayList<>(Arrays.asList(axes));
-        if (specifiedAxes.contains(Axis.INTERNAL_INCONSISTENCY)) {
+        if (Arrays.stream(axes).anyMatch(axis -> axis == Axis.INTERNAL_INCONSISTENCY)) {
             log.warn("Using deprecated Axis.INTERNAL_INCONSISTENCY - Should be replaced with Axis.INCONSISTENCY!");
-            specifiedAxes.add(Axis.INCONSISTENCY);
-        }
-        if (specifiedAxes.contains(Axis.INCONSISTENCY)) {
-            specifiedAxes.add(Axis.INTERNAL_INCONSISTENCY);
         }
 
-        _uncommittedEntries.add(new Check(responsible, method, specifiedAxes.toArray(new Axis[]{})));
-        _uncommittedAxes.addAll(specifiedAxes);
+        _uncommittedEntries.add(new Check(responsible, method, axes));
+        _uncommittedAxes.addAll(Arrays.asList(axes));
 
         return this;
     }

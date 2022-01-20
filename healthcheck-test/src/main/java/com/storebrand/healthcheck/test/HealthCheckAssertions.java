@@ -63,15 +63,6 @@ public final class HealthCheckAssertions {
 
     private static void assertAxesInSet(Axis[] expected, Set<Axis> axes, String message) {
         Set<Axis> expectedSet = new TreeSet<>(Arrays.asList(expected));
-
-        // TODO: Remove when INTERNAL_INCONSISTENCY is removed.
-        if (expectedSet.contains(Axis.INCONSISTENCY)) {
-            expectedSet.add(Axis.INTERNAL_INCONSISTENCY);
-        }
-        if (expectedSet.contains(Axis.INTERNAL_INCONSISTENCY)) {
-            expectedSet.add(Axis.INCONSISTENCY);
-        }
-
         if (expectedSet.equals(axes)) {
             return;
         }

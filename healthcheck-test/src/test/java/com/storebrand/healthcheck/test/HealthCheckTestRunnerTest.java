@@ -56,34 +56,6 @@ public class HealthCheckTestRunnerTest {
                 .hasTheFollowingSpecifiedAxes(Axis.NOT_READY);
     }
 
-    @Test
-    public void testInconsistencyAxisWithRunner() {
-        // :: Act
-        HealthCheckDto withLegacyAxis = HealthCheckTestRunner
-                .runHealthCheck(this::healthCheckWithLegacyInternalInconsistency);
-        HealthCheckDto withNewInconsistency = HealthCheckTestRunner
-                .runHealthCheck(this::healthCheckWithInconsistency);
-
-        // :: Perform some basic assertions
-        assertEquals(2, withLegacyAxis.axes.specified.size());
-        assertEquals(0, withLegacyAxis.axes.activated.size());
-        assertTrue(withLegacyAxis.axes.specified.contains(Axis.INTERNAL_INCONSISTENCY));
-        assertTrue(withLegacyAxis.axes.specified.contains(Axis.INCONSISTENCY));
-
-        // Make sure that the assertion tool also handles automatically adding the new INCONSISTENCY.
-        HealthCheckAssertions.assertThat(withLegacyAxis.axes)
-                        .hasTheFollowingSpecifiedAxes(Axis.INTERNAL_INCONSISTENCY);
-
-        assertEquals(2, withNewInconsistency.axes.specified.size());
-        assertEquals(0, withNewInconsistency.axes.activated.size());
-        assertTrue(withNewInconsistency.axes.specified.contains(Axis.INTERNAL_INCONSISTENCY));
-        assertTrue(withNewInconsistency.axes.specified.contains(Axis.INCONSISTENCY));
-
-        // Make sure that the assertion tool also handles automatically adding the legacy INTERNAL_INCONSISTENCY.
-        HealthCheckAssertions.assertThat(withNewInconsistency.axes)
-                .hasTheFollowingSpecifiedAxes(Axis.INCONSISTENCY);
-    }
-
     /**
      * Very simple health check method that verifies that we are able to run a simple test that returns OK.
      */
@@ -96,23 +68,5 @@ public class HealthCheckTestRunnerTest {
      */
     public void healthCheckMethodWithFault(CheckSpecification spec) {
         spec.check(Responsible.DEVELOPERS, Axis.NOT_READY, context -> context.fault("This is not ok"));
-    }
-
-    /**
-     * Simple check for verifying that adding {@link Axis#INTERNAL_INCONSISTENCY} will also cause
-     * {@link Axis#INCONSISTENCY} to be set.
-     */
-    public void healthCheckWithLegacyInternalInconsistency(CheckSpecification spec) {
-        spec.check(Responsible.DEVELOPERS, Axis.INTERNAL_INCONSISTENCY,
-                context -> context.ok("This should have two axes, due to legacy INTERNAL_INCONSISTENCY"));
-    }
-
-    /**
-     * Simple check for verifying that adding {@link Axis#INCONSISTENCY} will also cause
-     * {@link Axis#INTERNAL_INCONSISTENCY} to be set.
-     */
-    public void healthCheckWithInconsistency(CheckSpecification spec) {
-        spec.check(Responsible.DEVELOPERS, Axis.INCONSISTENCY,
-                context -> context.ok("This should have two axes, due to legacy INTERNAL_INCONSISTENCY"));
     }
 }
