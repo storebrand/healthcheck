@@ -30,7 +30,8 @@ import com.storebrand.healthcheck.serial.HealthCheckReportJsonSerializer;
  * @author Hallvard Nygård, Knut Saua Mathiesen, Endre Stølsvik, Dag Lennart Bertelsen, Kevin Mc Tiernan 2014-2021: former ServerStatus-solution and discussions/input
  */
 public class HealthCheckJsonOutput implements HealthCheckOutput {
-    private static final HealthCheckReportJsonSerializer SERIALIZER = new HealthCheckReportJsonSerializer();
+    private static final HealthCheckReportJsonSerializer SERIALIZER = new HealthCheckReportJsonSerializer()
+            .withPrettyPrinting();
 
     @Override
     public void write(HealthCheckReportDto dto, Writer out) {

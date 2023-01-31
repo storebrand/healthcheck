@@ -41,6 +41,7 @@ public class HealthCheckReportJsonSerializer {
 
     private final ObjectMapper _objectMapper;
     private final ObjectWriter _objectWriter;
+    private boolean _prettyPrint;
 
     public HealthCheckReportJsonSerializer() {
         ObjectMapper mapper = new ObjectMapper();
@@ -63,9 +64,17 @@ public class HealthCheckReportJsonSerializer {
         _objectWriter = _objectMapper.writerWithDefaultPrettyPrinter();
     }
 
+    public HealthCheckReportJsonSerializer withPrettyPrinting() {
+        _prettyPrint = true;
+        return this;
+    }
+
     public String serialize(HealthCheckReportDto dto) {
         try {
-            return _objectWriter.writeValueAsString(dto);
+            if (_prettyPrint) {
+                return _objectWriter.writeValueAsString(dto);
+            }
+            return _objectMapper.writeValueAsString(dto);
         }
         catch (JsonProcessingException e) {
             throw new SerializationException("Couldn't serialize HealthCheckReportDto.", e);
