@@ -596,13 +596,13 @@ public class HealthCheckRegistryImpl implements HealthCheckRegistry {
         statusDto.description = status.getDescription();
 
         AxesDto axesDto = null;
-        Responsible responsible = null;
+        List<CharSequence> responsibleTeams = null;
         Collection<EntityRefDto> affectedEntities = Collections.emptyList();
         // Check if this has status properties attached:
         if (status instanceof StatusWithAxes) {
             StatusWithAxes statusWithAxes = (StatusWithAxes) status;
             axesDto = axesToDto(statusWithAxes.getAxes());
-            responsible = statusWithAxes.getResponsible();
+            responsibleTeams = statusWithAxes.getResponsibleTeams();
             affectedEntities = statusWithAxes.getAffectedEntities()
                     .map(entities -> entities.stream().map(CheckSpecification.EntityRef::toDto).collect(toList()))
                     .orElse(null);
@@ -634,7 +634,12 @@ public class HealthCheckRegistryImpl implements HealthCheckRegistry {
         }
 
         statusDto.axes = Optional.ofNullable(axesDto);
-        statusDto.responsible = Optional.ofNullable(responsible);
+        statusDto.responsible = responsibleTeams != null && !responsibleTeams.isEmpty()
+                ? Optional.ofNullable(responsibleTeams.get(0)).map(CharSequence::toString)
+                : Optional.empty();
+        statusDto.responsibleTeams = responsibleTeams != null
+                ? responsibleTeams.stream().map(CharSequence::toString).collect(toList())
+                : Collections.emptyList();
         statusDto.affectedEntities = affectedEntities;
         statusDto.exception = Optional.ofNullable(reportException);
         statusDto.link = Optional.ofNullable(linkDto);

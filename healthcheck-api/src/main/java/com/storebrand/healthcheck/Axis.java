@@ -202,7 +202,7 @@ public enum Axis {
 
     /**
      * Convenience method to create an array of Axis'es - simply to avoid the somewhat verbose <code>new Axis[] {axis1,
-     * axis2}</code> code in the {@link CheckSpecification#check(Responsible, Axis[], Function)
+     * axis2}</code> code in the {@link CheckSpecification#check(CharSequence, Axis[], Function)
      * CheckSpecification.check(responsible, {axes}, lambda)} invocation, instead being able to use the slightly
      * prettier <code>Axis.of(axis1, axis2)</code>.
      *

@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -155,8 +156,16 @@ public class HealthCheckReportDto {
         public Optional<ThrowableHolderDto> exception = Optional.empty();
         /** An optional link that we may include for easy navigation to relevant pages */
         public Optional<LinkDto> link = Optional.empty();
-        /** If this check triggers any axes this is the team responsible for looking into the issue */
-        public Optional<Responsible> responsible = Optional.empty();
+        /**
+         * DEPRECATED - use responsibleTeams list instead. This will only include the first team in the team list, if
+         * there are multiple responsible teams.
+         * <p>
+         * If this check triggers any axes this is the team responsible for looking into the issue. If there are
+         * multiple teams responsible this will show the first one in the list.
+         */
+        public Optional<String> responsible = Optional.empty();
+        /** If this check triggers any axes these are the teams responsible for looking into the issue */
+        public List<String> responsibleTeams = Collections.emptyList();
     }
 
     /**

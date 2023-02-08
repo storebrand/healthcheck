@@ -108,7 +108,23 @@ public interface CheckSpecification {
      * Create an actual check inside this health check that checks an aspect of the system, and returns a set of
      * predefined axes that are either active or not, indicating a fault or no fault.
      *
-     * @param responsible
+     * @param responsibleTeams
+     *         the team(s) responsible for first looking into this check if it is faulty.
+     * @param axes
+     *         the axes that this status may trigger, worst case. You may use {@link Axis#of(Axis...)} to create this
+     *         array.
+     * @param method
+     *         the lambda/method that performs the actual check.
+     * @return {@link CheckSpecification} so we can chain commands in a builder pattern way.
+     */
+    CheckSpecification check(CharSequence responsibleTeams[], Axis[] axes, Function<CheckContext, CheckResult> method);
+
+    /**
+     * Convenience variant of {@link #check(CharSequence[], Axis[], Function)} if you only have a single responsible
+     * team. Create an actual check inside this health check that checks an aspect of the system, and returns a set of
+     * predefined axes that are either active or not, indicating a fault or no fault.
+     *
+     * @param responsibleTeam
      *         the team responsible for first looking into this check if it is faulty.
      * @param axes
      *         the axes that this status may trigger, worst case. You may use {@link Axis#of(Axis...)} to create this
@@ -117,23 +133,62 @@ public interface CheckSpecification {
      *         the lambda/method that performs the actual check.
      * @return {@link CheckSpecification} so we can chain commands in a builder pattern way.
      */
-    CheckSpecification check(Responsible responsible, Axis[] axes, Function<CheckContext, CheckResult> method);
+    default CheckSpecification check(CharSequence responsibleTeam, Axis[] axes,
+            Function<CheckContext, CheckResult> method) {
+        return check(Responsible.teams(responsibleTeam), axes, method);
+    }
+
+    /**
+     * Only supplied for backwards compatibility. See {@link #check(Responsible, Axis[], Function)} for details.
+     */
+    default CheckSpecification check(Responsible responsible, Axis[] axes, Function<CheckContext, CheckResult> method) {
+        return check((CharSequence) responsible, axes, method);
+    }
 
     /**
      * Convenience variant of {@link #check(Responsible, Axis[], Function)} if you only have a single axis. Create an
      * actual check inside this health check that checks an aspect of the system, and returns a set of predefined axes
      * that are either active or not, indicating a fault or no fault.
      *
-     * @param responsible
+     * @param responsibleTeams
      *         the team responsible for first looking into this check if it is faulty.
      * @param singleAxis
      *         the single axis that this status may trigger, worst case. If you need multiple axis, employ the {@link
-     *         #check(Responsible, Axis[], Function)}.
+     *         #check(CharSequence, Axis[], Function)}.
      * @param method
      *         the lambda/method that performs the actual check.
      * @return {@link CheckSpecification} so we can chain commands in a builder pattern way.
      */
-    CheckSpecification check(Responsible responsible, Axis singleAxis, Function<CheckContext, CheckResult> method);
+    default CheckSpecification check(CharSequence[] responsibleTeams, Axis singleAxis, Function<CheckContext,
+            CheckResult> method) {
+        return check(responsibleTeams, Axis.of(singleAxis), method);
+    }
+
+    /**
+     * Convenience variant of {@link #check(CharSequence[], Axis[], Function)} if you only have a single responsible
+     * team and a single axis. Create an actual check inside this health check that checks an aspect of the system, and
+     * returns a set of predefined axes that are either active or not, indicating a fault or no fault.
+     *
+     * @param responsibleTeam
+     *         the team responsible for first looking into this check if it is faulty.
+     * @param singleAxis
+     *         the single axis that this status may trigger, worst case. If you need multiple axis, employ the {@link
+     *         #check(CharSequence, Axis[], Function)}.
+     * @param method
+     *         the lambda/method that performs the actual check.
+     * @return {@link CheckSpecification} so we can chain commands in a builder pattern way.
+     */
+    default CheckSpecification check(CharSequence responsibleTeam, Axis singleAxis, Function<CheckContext,
+            CheckResult> method) {
+        return check(Responsible.teams(responsibleTeam), Axis.of(singleAxis), method);
+    }
+
+    /**
+     * Only supplied for backwards compatibility. See {@link #check(Responsible, Axis, Function)} for details.
+     */
+    default CheckSpecification check(Responsible responsible, Axis singleAxis, Function<CheckContext, CheckResult> method) {
+        return check((CharSequence) responsible, singleAxis, method);
+    }
 
     /**
      * Pass structured data along with the health check result, so a machine can parse and do something with this. Use
@@ -188,7 +243,7 @@ public interface CheckSpecification {
     }
 
     /**
-     * The shared context interface that is passed to actual {@link CheckSpecification#check(Responsible, Axis[],
+     * The shared context interface that is passed to actual {@link CheckSpecification#check(CharSequence, Axis[],
      * Function)} methods are more complex, as that allows for actually adding more text and links, and also it contains
      * the methods for creating a {@link CheckResult}. It is also possible to put data into the shared context for
      * consumption by later steps in the health check.
