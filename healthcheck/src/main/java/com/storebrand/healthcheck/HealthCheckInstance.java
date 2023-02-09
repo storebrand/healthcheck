@@ -169,7 +169,7 @@ public class HealthCheckInstance implements CheckSpecification {
     }
 
     @Override
-    public CheckSpecification check(Responsible responsible, Axis[] axes, Function<CheckContext, CheckResult> method) {
+    public CheckSpecification check(CharSequence responsibleTeams[], Axis[] axes, Function<CheckContext, CheckResult> method) {
         if (axes.length == 0) {
             throw new IllegalArgumentException("A check must be able to trigger at least one axis.");
         }
@@ -185,16 +185,10 @@ public class HealthCheckInstance implements CheckSpecification {
             log.warn("Using deprecated Axis.INTERNAL_INCONSISTENCY - Should be replaced with Axis.INCONSISTENCY!");
         }
 
-        _uncommittedEntries.add(new Check(responsible, method, axes));
+        _uncommittedEntries.add(new Check(Arrays.asList(responsibleTeams), method, axes));
         _uncommittedAxes.addAll(Arrays.asList(axes));
 
         return this;
-    }
-
-    @Override
-    public CheckSpecification check(Responsible responsible, Axis singleAxis,
-            Function<CheckContext, CheckResult> method) {
-        return check(responsible, Axis.of(singleAxis), method);
     }
 
     @Override
@@ -222,8 +216,8 @@ public class HealthCheckInstance implements CheckSpecification {
         private StatusWithAxes _currentStatus;
         private List<Status> _currentCheckResult;
 
-        private void setCurrentCheck(Responsible responsible, NavigableSet<Axis> axes) {
-            _currentStatus = Status.withAxes(responsible, "-MISSING DESCRIPTION-", axes);
+        private void setCurrentCheck(List<CharSequence> responsibleTeams, NavigableSet<Axis> axes) {
+            _currentStatus = Status.withAxes(responsibleTeams, "-MISSING DESCRIPTION-", axes);
             _currentCheckResult = new ArrayList<>();
         }
 
@@ -372,19 +366,19 @@ public class HealthCheckInstance implements CheckSpecification {
 
     private static final class Check implements Entry {
 
-        private final Responsible _responsible;
+        private final List<CharSequence> _responsibleTeams;
         private final Function<CheckContext, CheckResult> _method;
         private final NavigableSet<Axis> _axes;
 
-        private Check(Responsible responsible, Function<CheckContext, CheckResult> method, Axis... axes) {
-            _responsible = responsible;
+        private Check(List<CharSequence> responsibleTeams, Function<CheckContext, CheckResult> method, Axis... axes) {
+            _responsibleTeams = Collections.unmodifiableList(responsibleTeams);
             _method = method;
             _axes = Collections.unmodifiableNavigableSet(new TreeSet<>(Arrays.asList(axes)));
         }
 
         @Override
         public EntryRunResult run(Context context) {
-            context.setCurrentCheck(_responsible, _axes);
+            context.setCurrentCheck(_responsibleTeams, _axes);
             CheckResult result = _method.apply(context);
             // ?: Validate that the result is an instance of the expected class
             if (result instanceof Result) {

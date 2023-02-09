@@ -21,6 +21,7 @@ import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Objects;
@@ -51,8 +52,8 @@ public interface Status {
      * This creates a new style of health check status object that can contain axes of errors that describes the
      * different aspects of this status.
      *
-     * @param responsible
-     *         the "team" that should first look at issues.
+     * @param responsibleTeams
+     *         the "teams" that should first look at issues.
      * @param description
      *         a description for this health check status. This should describe what the issue is, and what must be done to
      *         resolve the issue.
@@ -60,13 +61,17 @@ public interface Status {
      *         the axes that this health check may trigger.
      * @return a {@link StatusWithAxes}.
      */
-    static StatusWithAxes withAxes(
-            Responsible responsible, String description, Collection<Axis> axes) {
-        return new StatusWithAxes(responsible, description, axes);
+    static StatusWithAxes withAxes(List<CharSequence> responsibleTeams, String description, Collection<Axis> axes) {
+        return new StatusWithAxes(responsibleTeams, description, axes);
     }
 
-    static StatusWithAxes withOneActiveAxis(Responsible responsible, String description, Axis axis) {
-        return new StatusWithAxes(responsible, description, Collections.singleton(axis)).setAllAxes(true);
+    static StatusWithAxes withAxes(CharSequence responsibleTeam, String description, Collection<Axis> axes) {
+        return Status.withAxes(Collections.singletonList(responsibleTeam), description, axes);
+    }
+
+    static StatusWithAxes withOneActiveAxis(CharSequence responsible, String description, Axis axis) {
+        return new StatusWithAxes(Collections.singletonList(responsible), description,
+                Collections.singleton(axis)).setAllAxes(true);
     }
 
     /**
@@ -109,14 +114,14 @@ public interface Status {
      * @see Axis for details on the axes that can be added.
      */
     class StatusWithAxes implements Status, HasAxes {
-        private final Responsible _responsible;
+        private final List<CharSequence> _responsibleTeams;
         private String _description;
         private final NavigableMap<Axis, Boolean> _axes = new TreeMap<>();
         private Set<EntityRef> _affectedEntities;
         private String _staticCompareString;
 
-        StatusWithAxes(Responsible responsible, String readableInfo, Collection<Axis> axes) {
-            _responsible = responsible;
+        StatusWithAxes(List<CharSequence> responsibleTeams, String readableInfo, Collection<Axis> axes) {
+            _responsibleTeams = responsibleTeams;
             _description = readableInfo;
             axes.forEach(axis -> _axes.put(axis, false));
 
@@ -133,8 +138,8 @@ public interface Status {
             return _axes;
         }
 
-        public Responsible getResponsible() {
-            return _responsible;
+        public List<CharSequence> getResponsibleTeams() {
+            return _responsibleTeams;
         }
 
         @Override
@@ -246,10 +251,33 @@ public interface Status {
          * @return true if the status has changed.
          */
         public boolean isEqualStatus(StatusWithAxes other) {
-            // ?: Have the responsible changed?
-            if (getResponsible() != other.getResponsible()) {
-                // -> Yes, then this is a different status
-                return false;
+            // :: Determine if the responsible teams changed
+            // ?: Do we have responsible in either status?
+            if (getResponsibleTeams() != null || other.getResponsibleTeams() != null) {
+                // -> Yes, then check if they are different
+
+                // ?: Is either null?
+                if (getResponsibleTeams() == null || other.getResponsibleTeams() == null) {
+                    // -> Yes, then one is null and the other is non-null, so this have changed.
+                    return false;
+                }
+
+                // E-> Both are non null at this point
+
+                // ?: Is the size different?
+                if (getResponsibleTeams().size() != other.getResponsibleTeams().size()) {
+                    // -> Yes, then they are not equal
+                    return false;
+                }
+
+                // Loop through and return false if they are not equal
+                for (int i = 0; i < getResponsibleTeams().size(); i++) {
+                    if (!getResponsibleTeams().get(i).equals(other.getResponsibleTeams().get(i))) {
+                        return false;
+                    }
+                }
+
+                // E-> At this point the responsible teams are determined to be equal
             }
 
             // ?: Are both ok?
