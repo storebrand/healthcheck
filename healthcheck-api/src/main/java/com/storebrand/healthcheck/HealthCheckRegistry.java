@@ -199,10 +199,10 @@ public interface HealthCheckRegistry {
 
     /**
      * Convenience method similar to {@link #getReadinessStatus()} and {@link #getLivenessStatus()}, but will only query
-     * reports that may trigger {@link Axis#CRITICAL_WAKE_PEOPLE_UP}. This is based on {@link
-     * CreateReportRequest#getCriticalStatus()}.
+     * reports that may trigger {@link Axis#CRITICAL_WAKE_PEOPLE_UP}. This is based on
+     * {@link CreateReportRequest#getCriticalStatus()}.
      *
-     * @return
+     * @return the health check report for the critical status.
      */
     HealthCheckReportDto getCriticalStatus();
 

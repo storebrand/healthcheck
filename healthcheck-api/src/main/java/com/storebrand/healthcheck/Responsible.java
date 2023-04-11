@@ -70,11 +70,11 @@ public enum Responsible implements CharSequence {
     /**
      * Convenience method to create an array of {@link CharSequence} - simply to avoid the somewhat verbose
      * <code>new CharSequence[] {team1, team2}</code> code in the
-     * {@link CheckSpecification#check(CharSequence[], Axis[], Function) CheckSpecification.check({responsible}, {axes}, lambda)}
-     * invocation, instead being able to use the slightly prettier <code>Responsible.teams(team1, team2)</code>.
+     * {@link CheckSpecification#check(CharSequence[], Axis[], Function) CheckSpecification.check({responsible}, {axes},
+     * lambda)} invocation, instead being able to use the slightly prettier <code>Responsible.teams(team1, team2)</code>.
      *
-     * @param axes
-     *         the axes to include
+     * @param teams
+     *         the teams to include
      * @return the array of axes
      */
     public static CharSequence[] teams(CharSequence... teams) {

@@ -382,16 +382,16 @@ public interface CheckSpecification {
          *
          * @param description
          *         a description for the fault.
-         * @return {@link CheckResult} that should be returned from the function specified in {@link *
-         * StatusSpecification#check(Responsible, Function, Axis...)}.
+         * @return {@link CheckResult} that should be returned from the function specified in {@link
+         * CheckSpecification#check(Responsible, Axis[], Function)}.
          */
         default CheckResult fault(String description) {
             return faultConditionally(true, description);
         }
 
         /**
-         * Called when the check is faulty. Can be used instead of calling {@link #faultConditionally(boolean, String,
-         * Collection)}
+         * Called when the check is faulty. Can be used instead of calling
+         * {@link #faultConditionally(boolean, String, Collection)}
          *
          * @param description
          *         a description for the fault.
@@ -405,8 +405,8 @@ public interface CheckSpecification {
         }
 
         /**
-         * Called when the check is faulty. Can be used instead of calling {@link #faultConditionally(boolean, String,
-         * EntityRef...)}
+         * Called when the check is faulty. Can be used instead of calling
+         * {@link #faultConditionally(boolean, String, EntityRef...)}
          *
          * @param description
          *         a description for the fault.
@@ -439,8 +439,8 @@ public interface CheckSpecification {
          *
          * @param description
          *         a description for the check that was OK.
-         * @return {@link CheckResult} that should be returned from the function specified in {@link *
-         * StatusSpecification#check(Responsible, Function, Axis...)}.
+         * @return {@link CheckResult} that should be returned from the function specified in {@link
+         * CheckSpecification#check(Responsible, Axis[], Function)}.
          */
         default CheckResult ok(String description) { // NOPMD this short name is OK
             return faultConditionally(false, description);
