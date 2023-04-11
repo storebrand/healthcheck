@@ -33,7 +33,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             pom {
-                name = 'Storebrand HealthCheck API'
+                name = 'Storebrand HealthCheck Output'
                 description = 'Storebrand HealthCheck utility classes for formatting health check results as JSON' +
                         ' or text output'
             }

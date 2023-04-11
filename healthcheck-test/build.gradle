@@ -31,7 +31,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             pom {
-                name = 'Storebrand HealthCheck API'
+                name = 'Storebrand HealthCheck Test'
                 description = 'Storebrand HealthCheck test utilities, for running and asserting health checks results' +
                         ' in unit tests'
             }

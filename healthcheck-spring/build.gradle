@@ -44,7 +44,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             pom {
-                name = 'Storebrand HealthCheck API'
+                name = 'Storebrand HealthCheck Spring'
                 description = 'Storebrand HealthCheck Spring binding, with auto resolving annotated health checks'
             }
         }
