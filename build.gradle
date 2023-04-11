@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
+// GradleWrapper version specifier.
+wrapper {
+    gradleVersion = "7.5.1"
+    setDistributionType(Wrapper.DistributionType.ALL)
+}
+
 allprojects {
-    group = 'com.storebrand'
+    group = 'no.storebrand.healthcheck'
     version = '0.3.2+2023-02-09'
 }
 
 subprojects {
-
     apply plugin: 'eclipse'
     apply plugin: 'idea'
     apply plugin: 'java-library'
+    apply plugin: 'signing'
     apply plugin: 'maven-publish'
 
     sourceCompatibility = 1.8
@@ -68,39 +74,76 @@ subprojects {
 
     task allDependencies(type: DependencyReportTask) {}
 
+    // ------------------------------------------------------------------------------------------
+    // Local release configuration. The release file is not checked in to version control,
+    // and should instead be kept locally to configure how to deploy this.
+    if (file("${ rootProject.projectDir }/repositories.gradle").exists()) {
+        apply from: "${ rootProject.projectDir }/repositories.gradle"
+    }
+
+    // ------------------------------------------------------------------------------------------
+    // Maven Central publishing configuration, via Sonatype
+
+    signing {
+        sign publishing.publications
+    }
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
                 pom {
-                    name = 'HealthCheck'
-                    description = 'Health checks for services.'
+                    name = 'Storebrand HealthCheck'
+                    description = 'Java library that makes it easy to report the current health of a service.'
+                    url = 'https://github.com/storebrand/healthcheck'
+                    licenses {
+                        license {
+                            name = 'Apache License 2.0'
+                            url = 'https://www.apache.org/licenses/LICENSE-2.0'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'stolsvik'
+                            name = 'Endre Stølsvik'
+                            email = 'endre@stolsvik.com'
+                        }
+                        developer {
+                            id = 'khiim'
+                            name = 'Kristian Hiim'
+                            email = 'kristian@hiim.no'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:https://github.com/storebrand/healthcheck.git'
+                        developerConnection = 'scm:git:ssh://github.com:storebrand/healthcheck.git'
+                        url = 'https://github.com/storebrand/healthcheck'
+                    }
                 }
                 from components.java
             }
         }
+        repositories {
+            maven {
+                name 'SonatypeOSSRHSnapshot'
+                url 'https://oss.sonatype.org/content/repositories/snapshots'
+                credentials {
+                    // using findProperty(..) to be able to build without it being defined.
+                    username findProperty('sonatypeUsername') as String ?: "should be in different file"
+                    password findProperty('sonatypePassword') as String ?: "should be in different file"
+                }
+            }
+            maven {
+                name 'SonatypeOSSRHStaging'
+                url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+                credentials {
+                    // using findProperty(..) to be able to build without it being defined.
+                    username findProperty('sonatypeUsername') as String ?: "should be in different file"
+                    password findProperty('sonatypePassword') as String ?: "should be in different file"
+                }
+            }
+        }
     }
-
-    // ------------------------------------------------
-    // -- Release configuration. The release file is not checked in to version control, and should
-    //    instead be kept locally to configure how to deploy this.
-    if (file("${ rootProject.projectDir }/repositories.gradle").exists()) {
-        apply from: "${ rootProject.projectDir }/repositories.gradle"
-    }
-}
-
-// GradleWrapper version specifier.
-wrapper { gradleVersion = "7.2" }
-
-task test(dependsOn: [
-        ':healthcheck:test',
-        ':healthcheck-annotation:test',
-        ':healthcheck-api:test',
-        ':healthcheck-spring:test',
-        ':healthcheck-scanner:test',
-        ':healthcheck-output:test',
-        ':healthcheck-test:test'])
-task verifyAll(dependsOn: [test])
-
-def sizeToString(long size) {
-    "${sprintf '%,d', size} B = ${sprintf '%,.3f', size/(1024*1024d)} MB"
+    // "Alias-tasks" to publish to Sonatype's OSSRH (OSS Repository Hosting), Snapshot and Staging
+    task publishSnapshot(dependsOn: [publishAllPublicationsToSonatypeOSSRHSnapshotRepository])
+    task publishStaging(dependsOn: [publishAllPublicationsToSonatypeOSSRHStagingRepository])
 }

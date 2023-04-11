@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import java.nio.charset.Charset
+
 rootProject.name = 'HealthCheck'
 include 'healthcheck'
 include 'healthcheck-api'
@@ -23,3 +25,7 @@ include 'healthcheck-scanner'
 include 'healthcheck-output'
 include 'healthcheck-test'
 
+
+println "** Java: ${ System.getProperty('java.version') }, Groovy: $GroovySystem.version," +
+        " Gradle: ${ gradle.gradleVersion }, Charset.defaultCharset(): ${ Charset.defaultCharset() }" +
+        "   (printed from settings.gradle)"
