@@ -32,3 +32,14 @@ dependencies {
     // Placing logback-classic on testCompile path as we need some form of logging implementation.
     testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.5'
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = 'Storebrand HealthCheck API'
+                description = 'Storebrand HealthCheck scanner for detecting annotated health check methods'
+            }
+        }
+    }
+}
