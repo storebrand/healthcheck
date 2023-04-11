@@ -18,3 +18,13 @@ dependencies  {
     // None
 }
 
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = 'Storebrand HealthCheck API'
+                description = 'API for Storebrand HealthCheck'
+            }
+        }
+    }
+}
