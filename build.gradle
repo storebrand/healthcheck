@@ -85,6 +85,11 @@ subprojects {
     // Maven Central publishing configuration, via Sonatype
 
     signing {
+        def signingKeyId = findProperty("signingKeyId") as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
+        def signingKey = findProperty("signingKey") as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
+        def signingPassword = findProperty("signingPassword") as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
+        useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+
         sign publishing.publications
     }
 
@@ -128,8 +133,8 @@ subprojects {
                 url 'https://oss.sonatype.org/content/repositories/snapshots'
                 credentials {
                     // using findProperty(..) to be able to build without it being defined.
-                    username findProperty('sonatypeUsername') as String ?: "should be in different file"
-                    password findProperty('sonatypePassword') as String ?: "should be in different file"
+                    username findProperty('sonatypeUsername') as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
+                    password findProperty('sonatypePassword') as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
                 }
             }
             maven {
@@ -137,8 +142,8 @@ subprojects {
                 url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
                 credentials {
                     // using findProperty(..) to be able to build without it being defined.
-                    username findProperty('sonatypeUsername') as String ?: "should be in different file"
-                    password findProperty('sonatypePassword') as String ?: "should be in different file"
+                    username findProperty('sonatypeUsername') as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
+                    password findProperty('sonatypePassword') as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
                 }
             }
         }
