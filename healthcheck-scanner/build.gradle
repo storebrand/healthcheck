@@ -18,19 +18,15 @@ dependencies {
     api project(':healthcheck-api')
     api project(':healthcheck-annotation')
 
-    implementation 'io.github.classgraph:classgraph:4.8.120'
+    implementation "io.github.classgraph:classgraph:$classgraphVersion"
 
     // The SFL4J API. Since you should provide the SLF4J implementation yourself, we use compileOnly.
     compileOnly "org.slf4j:slf4j-api:$slf4jVersion"
 
-
-    // Unit testing
+    // === TESTING:
     testImplementation "junit:junit:$junitVersion"
-
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
-
-    // Placing logback-classic on testCompile path as we need some form of logging implementation.
-    testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.5'
+    testRuntimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
 }
 
 publishing {

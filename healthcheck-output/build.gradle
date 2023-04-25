@@ -22,11 +22,10 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}"
 
-    testImplementation "junit:junit:$junitVersion"
+    // === TESTING:
     testImplementation project(':healthcheck')
-
-    // Placing logback-classic on testCompile path as we need some form of logging implementation.
-    testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.5'
+    testImplementation "junit:junit:$junitVersion"
+    testRuntimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
 }
 
 publishing {
