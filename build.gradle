@@ -21,7 +21,7 @@ wrapper {
 }
 
 allprojects {
-    group = 'no.storebrand.healthcheck'
+    group = 'com.storebrand.healthcheck'
     version = '0.3.2+2023-02-09'
 }
 
@@ -130,7 +130,9 @@ subprojects {
         repositories {
             maven {
                 name 'SonatypeOSSRHSnapshot'
-                url 'https://oss.sonatype.org/content/repositories/snapshots'
+                // NOTE: GroupId no.storebrand uses "oss.sonatype.org", while com.storebrand uses "s01.oss.sonatype.org"
+                // url 'https://oss.sonatype.org/content/repositories/snapshots'
+                url 'https://s01.oss.sonatype.org/content/repositories/snapshots'
                 credentials {
                     // using findProperty(..) to be able to build without it being defined.
                     username findProperty('sonatypeUsername') as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
@@ -139,7 +141,9 @@ subprojects {
             }
             maven {
                 name 'SonatypeOSSRHStaging'
-                url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+                // NOTE: GroupId no.storebrand uses "oss.sonatype.org", while com.storebrand uses "s01.oss.sonatype.org"
+                // url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+                url 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2'
                 credentials {
                     // using findProperty(..) to be able to build without it being defined.
                     username findProperty('sonatypeUsername') as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
