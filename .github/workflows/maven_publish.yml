@@ -1,4 +1,4 @@
-name: Build and pub to Sonatype Staging
+name: Build and Publish to OSSRH Staging
 
 on:
   workflow_dispatch:
