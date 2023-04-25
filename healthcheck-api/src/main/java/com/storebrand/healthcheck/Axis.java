@@ -96,9 +96,10 @@ public enum Axis {
 
     /**
      * This indicates that the problem is an external service. Something outside this service is not working as we
-     * expect, and this causes issues for us. This can be used together with {@link #DEGRADED_COMPLETE}, {@link
-     * #DEGRADED_PARTIAL} or {@link #DEGRADED_MINOR} to describe if there are any degraded performance as a result of
-     * this external issue.
+     * expect, and this causes issues for us. This can be used together with {@link #DEGRADED_COMPLETE},
+     * {@link #DEGRADED_PARTIAL} or {@link #DEGRADED_MINOR} to describe if there are any degraded performance as a
+     * result of this external issue. Can also be used together with {@link #INCONSISTENCY} if a consistency check
+     * regards data external to the service.
      */
     EXTERNAL,
 
@@ -109,10 +110,10 @@ public enum Axis {
      * Any error that directly affects customers should be handled as soon as possible. This might be an incident that
      * requires followup.
      * <p>
-     * Note that if this is a critical error affecting customers you should consider also adding {@link
-     * #CRITICAL_WAKE_PEOPLE_UP}. However, if the error occurs at night it might be wise to wait until the morning before
-     * triggering {@link #CRITICAL_WAKE_PEOPLE_UP}, unless the error REALLY is so severe that it really needs to be fixed
-     * in the middle of the night.
+     * Note that if this is a critical error affecting customers you should consider also adding
+     * {@link #CRITICAL_WAKE_PEOPLE_UP}. However, if the error occurs at night it might be wise to wait until the
+     * morning before triggering {@link #CRITICAL_WAKE_PEOPLE_UP}, unless the error REALLY is so severe that it really
+     * needs to be fixed in the middle of the night.
      */
     AFFECTS_CUSTOMERS,
 
@@ -120,8 +121,8 @@ public enum Axis {
      * This error is not a system or programming error, but rather a process error. This might be something such as
      * missing payments, or there is something wrong with data that has been entered into the system by a user. This is
      * an error on the business side of things, not with the system itself. It might also require that someone does
-     * something manually before allowing the business process to continue, so consider also adding {@link
-     * #MANUAL_INTERVENTION_REQUIRED} if this is the case.
+     * something manually before allowing the business process to continue, so consider also adding
+     * {@link #MANUAL_INTERVENTION_REQUIRED} if this is the case.
      */
     PROCESS_ERROR,
 
@@ -139,11 +140,22 @@ public enum Axis {
      * <p>
      * Note: After startup has finished a service should not normally report "Not ready", unless you want it taken out
      * of the load balancer for any reason. If you do this be aware that Kubernetes and other application gateways will
-     * not route HTTP traffic to this instance. Main takeaway: This should primarily only be used during startup.
+     * not route HTTP traffic to this instance. Use with caution after startup: There are two problems when declaring a
+     * node not-ready during operation:
+     * <ol>
+     *     <li>If a test is "global" in that all nodes will come to the same conclusion, all nodes will more or
+     *     less at the same time state "not ready", and there will be no node left for the load balancer to route
+     *     to.</li>
+     *     <li>It is probably not a good idea to use this as an indicator for stating that the node is overloaded,
+     *     and thus request that no more new traffic should be routed. The problem is that the remaining nodes now
+     *     will get that traffic instead, and if they were on the brink, the next node will also soon state "not
+     *     ready", again giving more traffic to the remaining. This again results in no node being left for the
+     *     load balancer to route to.</li>
+     * </ol>
      * <p>
-     * Also note: Make sure that health checks that use this axis does not accidentally throw unhandled exceptions out
-     * of the checks, as that will trigger all specified axis, including {@link Axis#NOT_READY}. This may cause the
-     * service to be taken out of load balancers and such. You should never let health checks throw unhandled
+     * <b>Also note:</b> Make sure that health checks that use this axis does not accidentally throw unhandled
+     * exceptions out of the checks, as that will trigger all specified axis, including {@link Axis#NOT_READY}. This may
+     * cause the service to be taken out of load balancers. You should never let health checks throw unhandled
      * exceptions.
      */
     NOT_READY,
@@ -178,7 +190,7 @@ public enum Axis {
      * unhandled exception. If this axis is triggered you must assume that the health check did not manage to actually
      * check what it was supposed to check. This is likely a bug, and must be fixed in code.
      * <p>
-     * This axis correspons to {@link com.storebrand.healthcheck.HealthCheckReportDto.RunStatusDto#crashed}.
+     * This axis corresponds to {@link com.storebrand.healthcheck.HealthCheckReportDto.RunStatusDto#crashed}.
      */
     SYS_CRASHED,
 
@@ -187,7 +199,7 @@ public enum Axis {
      * looked into. If a check regularly takes more time than expected you should either fix the check, or increase the
      * maximum expected runtime of the health check.
      * <p>
-     * This axis correspons to {@link com.storebrand.healthcheck.HealthCheckReportDto.RunStatusDto#slow}.
+     * This axis corresponds to {@link com.storebrand.healthcheck.HealthCheckReportDto.RunStatusDto#slow}.
      */
     SYS_SLOW,
 
@@ -196,7 +208,7 @@ public enum Axis {
      * time since the last time it was updated. A stale check might indicate that the background thread for the health
      * check might be stuck, or something else might prevent the check from being updated. It should be investigated.
      * <p>
-     * This axis correspons to {@link com.storebrand.healthcheck.HealthCheckReportDto.RunStatusDto#stale}.
+     * This axis corresponds to {@link com.storebrand.healthcheck.HealthCheckReportDto.RunStatusDto#stale}.
      */
     SYS_STALE;
 

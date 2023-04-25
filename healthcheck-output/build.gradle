@@ -23,7 +23,7 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}"
 
     // === TESTING:
-    testImplementation project(':healthcheck')
+    testImplementation project(':healthcheck-impl')
     testImplementation "junit:junit:$junitVersion"
     testRuntimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
 }

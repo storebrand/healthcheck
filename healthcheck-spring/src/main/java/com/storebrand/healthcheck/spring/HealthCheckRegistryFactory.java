@@ -28,8 +28,8 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 import com.storebrand.healthcheck.HealthCheckLogger;
 import com.storebrand.healthcheck.HealthCheckReportDto.HealthCheckDto;
-import com.storebrand.healthcheck.HealthCheckRegistryImpl;
-import com.storebrand.healthcheck.ServiceInfo;
+import com.storebrand.healthcheck.impl.HealthCheckRegistryImpl;
+import com.storebrand.healthcheck.impl.ServiceInfo;
 import com.storebrand.healthcheck.output.HealthCheckTextOutput;
 
 /**

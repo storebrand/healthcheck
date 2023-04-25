@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.storebrand.healthcheck;
+package com.storebrand.healthcheck.impl;
 
 import java.lang.management.ManagementFactory;
 import java.time.Clock;
@@ -35,10 +35,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import com.storebrand.healthcheck.Axis;
+import com.storebrand.healthcheck.HealthCheckLogger;
+import com.storebrand.healthcheck.HealthCheckMetadata;
 import com.storebrand.healthcheck.HealthCheckRegistry.RegisteredHealthCheck;
 import com.storebrand.healthcheck.HealthCheckReportDto.HealthCheckDto;
-import com.storebrand.healthcheck.HealthCheckRegistryImpl.HealthCheckResult;
-import com.storebrand.healthcheck.Status.StatusWithAxes;
+import com.storebrand.healthcheck.Responsible;
+import com.storebrand.healthcheck.impl.HealthCheckRegistryImpl.HealthCheckResult;
+import com.storebrand.healthcheck.impl.Status.StatusWithAxes;
 
 /**
  * This is a runner that regularly runs a {@link HealthCheckInstance} asynchronously in a separate thread. It caches the

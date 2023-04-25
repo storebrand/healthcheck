@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.storebrand.healthcheck;
+package com.storebrand.healthcheck.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,11 +28,15 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.storebrand.healthcheck.HealthCheckRegistryImpl.HealthCheckResult;
-import com.storebrand.healthcheck.Status.StatusInfoOnly;
-import com.storebrand.healthcheck.Status.StatusLink;
-import com.storebrand.healthcheck.Status.StatusWithAxes;
-import com.storebrand.healthcheck.Status.StatusWithThrowable;
+import com.storebrand.healthcheck.Axis;
+import com.storebrand.healthcheck.CheckSpecification;
+import com.storebrand.healthcheck.HealthCheckMetadata;
+import com.storebrand.healthcheck.Responsible;
+import com.storebrand.healthcheck.impl.HealthCheckRegistryImpl.HealthCheckResult;
+import com.storebrand.healthcheck.impl.Status.StatusInfoOnly;
+import com.storebrand.healthcheck.impl.Status.StatusLink;
+import com.storebrand.healthcheck.impl.Status.StatusWithAxes;
+import com.storebrand.healthcheck.impl.Status.StatusWithThrowable;
 
 /**
  * Tests for {@link HealthCheckInstance}.

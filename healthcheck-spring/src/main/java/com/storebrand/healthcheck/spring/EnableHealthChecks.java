@@ -33,6 +33,7 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
 import com.storebrand.healthcheck.annotation.HealthCheck;
+import com.storebrand.healthcheck.impl.ServiceInfo;
 
 /**
  * Annotation for enabling health checks in Spring. Add this annotation to a Spring configuration class, and watch as
@@ -44,7 +45,7 @@ import com.storebrand.healthcheck.annotation.HealthCheck;
  * HealthCheckSettings} for providing these settings. You can use the {@link SimpleHealthCheckSettings} implementation.
  * <p>
  * An implementation of both {@link com.storebrand.healthcheck.HealthCheckRegistry} and {@link
- * com.storebrand.healthcheck.ServiceInfo} will be provided to the Spring context by this bean.
+ * ServiceInfo} will be provided to the Spring context by this bean.
  *
  * @see HealthCheckSpringAnnotationRegistration for details on automatic registration of health checks.
  *

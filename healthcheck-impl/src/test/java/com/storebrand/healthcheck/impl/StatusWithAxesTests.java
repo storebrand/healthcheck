@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.storebrand.healthcheck;
+package com.storebrand.healthcheck.impl;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -24,7 +24,10 @@ import java.util.Collections;
 
 import org.junit.Test;
 
-import com.storebrand.healthcheck.Status.StatusWithAxes;
+import com.storebrand.healthcheck.Axis;
+import com.storebrand.healthcheck.CheckSpecification;
+import com.storebrand.healthcheck.Responsible;
+import com.storebrand.healthcheck.impl.Status.StatusWithAxes;
 
 
 /**

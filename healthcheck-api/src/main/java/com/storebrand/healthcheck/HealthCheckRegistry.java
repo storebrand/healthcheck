@@ -280,7 +280,7 @@ public interface HealthCheckRegistry {
      * should force fresh data, or get data from cache.
      */
     class CreateReportRequest {
-        private Collection<Axis> _axes;
+        private Collection<Axis> _axes = Collections.emptyList(); // Empty -> no filtering.
         private boolean _forceFreshData = false;
         private final Set<String> _excludeChecks = new TreeSet<>();
         private final List<Predicate<RegisteredHealthCheck>> _filters = new ArrayList<>();
@@ -302,7 +302,8 @@ public interface HealthCheckRegistry {
         }
 
         /**
-         * Only include health check if filter returns true
+         * Only include health check if filter returns <code>true</code>. If multiple filters are added, all must
+         * return <code>true</code> for a given health check to be included.
          */
         public CreateReportRequest filterChecks(Predicate<RegisteredHealthCheck> healthCheckFilter) {
             _filters.add(healthCheckFilter);
@@ -321,7 +322,19 @@ public interface HealthCheckRegistry {
 
         /**
          * The readiness status queries all health checks that have the axis {@link Axis#NOT_READY}. This is used by
-         * load balancers to determine if we can route traffic to the service.
+         * load balancers to determine if we can route traffic to the service. This axis should primarly be used for
+         * startup readiness.
+         * <p>
+         * Use with caution after startup: There are two problems when declaring a node not-ready:
+         * <ol>
+         *     <li>If a test is "global" in that all nodes will come to the same conclusion, all nodes will more or
+         *     less at the same time state "not ready", and there will be no node left for the load balancer to route to.</li>
+         *     <li>It is probably not a good idea to use this as an indicator for stating that the node is overloaded,
+         *     and thus request that no more new traffic should be routed. The problem is that the remaining nodes now
+         *     will get that traffic instead, and if they were on the brink, the next node will also soon state "not
+         *     ready", again giving more traffic to the remaining. This again leads to no node being left for the
+         *     load balancer to route to.</li>
+         * </ol>
          */
         public static CreateReportRequest readinessStatus() {
             return new CreateReportRequest()
@@ -342,8 +355,8 @@ public interface HealthCheckRegistry {
         }
 
         /**
-         * The critical status will query all checks that have the axis {@link Axis#CRITICAL_WAKE_PEOPLE_UP}. This can be
-         * used by systems monitoring the service in order to determine if it is in such a critical state that people
+         * The critical status will query all checks that have the axis {@link Axis#CRITICAL_WAKE_PEOPLE_UP}. This can
+         * be used by systems monitoring the service in order to determine if it is in such a critical state that people
          * should be alerted immediately.
          * <p>
          * The {@link Axis#CRITICAL_WAKE_PEOPLE_UP} axis should be used with care, as triggering it may end up causing
@@ -354,33 +367,31 @@ public interface HealthCheckRegistry {
                     .includeOnlyChecksWithAnyOfTheseAxes(Axis.CRITICAL_WAKE_PEOPLE_UP);
         }
 
-        // ===== INTERNAL METHODS ======================================================================================
+        // ===== QUERY METHODS FOR IMPLEMENTATION ======================================================================
 
-        boolean shouldIncludeCheck(RegisteredHealthCheck registeredHealthCheck) {
+        public boolean shouldIncludeCheck(RegisteredHealthCheck registeredHealthCheck) {
+            // :: If no filters added, no filtering will occur.
             for (Predicate<RegisteredHealthCheck> filter : _filters) {
                 if (!filter.test(registeredHealthCheck)) {
                     return false;
                 }
             }
 
+            // :: Exclude by name
             if (_excludeChecks.contains(registeredHealthCheck.getMetadata().name)) {
                 return false;
             }
 
-            if (!getAxes().isPresent()) {
+            // :: Filter on axes.
+            if (_axes.isEmpty()) {
+                // No filter axes => all included.
                 return true;
             }
-
-            return getAxes()
-                    .map(axes -> !Collections.disjoint(axes, registeredHealthCheck.getAxes()))
-                    .orElse(true);
+            // If there is zero match between "filter axes" and the axes from the healthcheck, we do not want it.
+            return !Collections.disjoint(_axes, registeredHealthCheck.getAxes());
         }
 
-        Optional<Collection<Axis>> getAxes() {
-            return Optional.ofNullable(_axes);
-        }
-
-        boolean shouldForceFreshData() {
+        public boolean shouldForceFreshData() {
             return _forceFreshData;
         }
     }

@@ -31,7 +31,7 @@ import com.storebrand.healthcheck.HealthCheckReportDto.HealthCheckDto;
 import com.storebrand.healthcheck.HealthCheckReportDto.RunStatusDto;
 import com.storebrand.healthcheck.HealthCheckReportDto.StatusDto;
 import com.storebrand.healthcheck.HealthCheckReportDto.ThrowableHolderDto;
-import com.storebrand.healthcheck.ServiceInfo;
+import com.storebrand.healthcheck.impl.ServiceInfo;
 import com.storebrand.healthcheck.serial.HealthCheckReportJsonSerializer;
 
 public class HealthCheckReportSerializerTest {

@@ -17,8 +17,8 @@
 import java.nio.charset.Charset
 
 rootProject.name = 'HealthCheck'
-include 'healthcheck'
 include 'healthcheck-api'
+include 'healthcheck-impl'
 include 'healthcheck-spring'
 include 'healthcheck-annotation'
 include 'healthcheck-scanner'

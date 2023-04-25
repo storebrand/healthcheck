@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.storebrand.healthcheck;
+package com.storebrand.healthcheck.impl;
 
 import static java.util.stream.Collectors.toList;
 
@@ -22,6 +22,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.storebrand.healthcheck.HealthCheckLogger;
 import com.storebrand.healthcheck.HealthCheckReportDto.HealthCheckDto;
 
 public class TestLogRecorder implements HealthCheckLogger {

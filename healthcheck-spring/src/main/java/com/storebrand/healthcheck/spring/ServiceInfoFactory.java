@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 import com.storebrand.healthcheck.HealthCheckRegistry.InfoPropertiesSupplier;
-import com.storebrand.healthcheck.ServiceInfo;
+import com.storebrand.healthcheck.impl.ServiceInfo;
 
 public class ServiceInfoFactory extends AbstractFactoryBean<ServiceInfo> {
 

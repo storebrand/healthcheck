@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.storebrand.healthcheck;
+package com.storebrand.healthcheck.impl;
 
 import java.lang.management.ManagementFactory;
 import java.time.Instant;
@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.storebrand.healthcheck.HealthCheckRegistry.InfoPropertiesSupplier;
 import com.storebrand.healthcheck.HealthCheckRegistry.InfoProperty;
+import com.storebrand.healthcheck.HealthCheckReportDto;
 import com.storebrand.healthcheck.HealthCheckReportDto.ServiceInfoDto;
 import com.storebrand.healthcheck.HealthCheckReportDto.ServiceInfoDto.HostDto;
 import com.storebrand.healthcheck.HealthCheckReportDto.ServiceInfoDto.LoadDto;

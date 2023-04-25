@@ -18,7 +18,7 @@ dependencies  {
     api project(':healthcheck-api')
     api project(':healthcheck-annotation')
 
-    implementation project(':healthcheck')
+    implementation project(':healthcheck-impl')
     implementation project(':healthcheck-output')
 
     // The SFL4J API. Since you should provide the SLF4J implementation yourself, we use compileOnly.

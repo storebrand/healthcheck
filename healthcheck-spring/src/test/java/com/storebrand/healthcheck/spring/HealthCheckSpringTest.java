@@ -36,7 +36,7 @@ import com.storebrand.healthcheck.HealthCheckReportDto.HealthCheckDto;
 import com.storebrand.healthcheck.HealthCheckMetadata;
 import com.storebrand.healthcheck.HealthCheckRegistry;
 import com.storebrand.healthcheck.Responsible;
-import com.storebrand.healthcheck.ServiceInfo;
+import com.storebrand.healthcheck.impl.ServiceInfo;
 import com.storebrand.healthcheck.scanner.ClassGraphHealthCheckMethodScanner;
 import com.storebrand.healthcheck.spring.testhealthchecks1.SpringComponentWithHealthCheck;
 import com.storebrand.healthcheck.test.HealthCheckAssertions;

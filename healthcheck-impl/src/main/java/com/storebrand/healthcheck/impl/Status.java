@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.storebrand.healthcheck;
+package com.storebrand.healthcheck.impl;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.storebrand.healthcheck.Axis;
 import com.storebrand.healthcheck.CheckSpecification.EntityRef;
 
 /**

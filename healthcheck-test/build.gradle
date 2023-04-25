@@ -16,7 +16,7 @@
 
 dependencies {
     api project(':healthcheck-api')
-    implementation project(':healthcheck')
+    implementation project(':healthcheck-impl')
 
     // === TESTING
     testImplementation "junit:junit:$junitVersion"

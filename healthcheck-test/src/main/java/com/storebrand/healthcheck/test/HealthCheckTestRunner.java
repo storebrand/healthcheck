@@ -25,10 +25,10 @@ import java.util.function.Consumer;
 
 import com.storebrand.healthcheck.CheckSpecification;
 import com.storebrand.healthcheck.HealthCheckMetadata;
-import com.storebrand.healthcheck.HealthCheckInstance;
+import com.storebrand.healthcheck.impl.HealthCheckInstance;
 import com.storebrand.healthcheck.HealthCheckReportDto.HealthCheckDto;
-import com.storebrand.healthcheck.HealthCheckRegistryImpl;
-import com.storebrand.healthcheck.HealthCheckRegistryImpl.HealthCheckResult;
+import com.storebrand.healthcheck.impl.HealthCheckRegistryImpl;
+import com.storebrand.healthcheck.impl.HealthCheckRegistryImpl.HealthCheckResult;
 
 /**
  * Special class for executing a health check specification method immediately and return a {@link HealthCheckDto}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.storebrand.healthcheck;
+package com.storebrand.healthcheck.impl;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -45,6 +45,12 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.storebrand.healthcheck.Axis;
+import com.storebrand.healthcheck.CheckSpecification;
+import com.storebrand.healthcheck.HealthCheckLogger;
+import com.storebrand.healthcheck.HealthCheckMetadata;
+import com.storebrand.healthcheck.HealthCheckRegistry;
+import com.storebrand.healthcheck.HealthCheckReportDto;
 import com.storebrand.healthcheck.HealthCheckReportDto.AxesDto;
 import com.storebrand.healthcheck.HealthCheckReportDto.EntityRefDto;
 import com.storebrand.healthcheck.HealthCheckReportDto.HealthCheckDto;
@@ -52,10 +58,11 @@ import com.storebrand.healthcheck.HealthCheckReportDto.LinkDto;
 import com.storebrand.healthcheck.HealthCheckReportDto.RunStatusDto;
 import com.storebrand.healthcheck.HealthCheckReportDto.StatusDto;
 import com.storebrand.healthcheck.HealthCheckReportDto.ThrowableHolderDto;
-import com.storebrand.healthcheck.Status.HasAxes;
-import com.storebrand.healthcheck.Status.StatusLink;
-import com.storebrand.healthcheck.Status.StatusWithAxes;
-import com.storebrand.healthcheck.Status.StatusWithThrowable;
+import com.storebrand.healthcheck.Responsible;
+import com.storebrand.healthcheck.impl.Status.HasAxes;
+import com.storebrand.healthcheck.impl.Status.StatusLink;
+import com.storebrand.healthcheck.impl.Status.StatusWithAxes;
+import com.storebrand.healthcheck.impl.Status.StatusWithThrowable;
 
 /**
  * Implementation of the health check registry, that manages all {@link HealthCheckInstance}.

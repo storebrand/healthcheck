@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.storebrand.healthcheck;
+package com.storebrand.healthcheck.impl;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -140,7 +140,7 @@ final class Host {
         }
 
         // :? Did the hostname command return a blankk/null hostname?
-        if (hostname == null || "".equals(hostname.trim())) { // TODO: check SkStringUtils.isBlank(hostname)) {
+        if (hostname == null || "".equals(hostname.trim())) {
             // Yes -> then we use the alternative InetAddress-method for determining hostname
             try {
                 hostname = InetAddress.getLocalHost().getHostName();
@@ -164,7 +164,6 @@ final class Host {
 
     /** Initialize map of network interface to inetadresses. */
     private static <T> Map<NetworkInterface, List<InetAddress>> tryToFindNetworkInterfaceAddressMap() {
-
         try {
             Map<NetworkInterface, List<InetAddress>> map = new HashMap<>();
             for (NetworkInterface n : Collections.list(NetworkInterface.getNetworkInterfaces())) {

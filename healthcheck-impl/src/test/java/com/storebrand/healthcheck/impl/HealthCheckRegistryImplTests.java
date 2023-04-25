@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.storebrand.healthcheck;
+package com.storebrand.healthcheck.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -26,7 +26,12 @@ import java.time.ZoneId;
 
 import org.junit.Test;
 
+import com.storebrand.healthcheck.Axis;
+import com.storebrand.healthcheck.HealthCheckMetadata;
+import com.storebrand.healthcheck.HealthCheckRegistry;
 import com.storebrand.healthcheck.HealthCheckRegistry.CreateReportRequest;
+import com.storebrand.healthcheck.HealthCheckReportDto;
+import com.storebrand.healthcheck.Responsible;
 
 /**
  * Tests for the {@link HealthCheckRegistryImpl}.

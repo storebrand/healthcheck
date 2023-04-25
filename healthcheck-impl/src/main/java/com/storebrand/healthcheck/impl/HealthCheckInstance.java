@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.storebrand.healthcheck;
+package com.storebrand.healthcheck.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,8 +36,13 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.storebrand.healthcheck.HealthCheckRegistryImpl.HealthCheckResult;
-import com.storebrand.healthcheck.Status.StatusWithAxes;
+import com.storebrand.healthcheck.Axis;
+import com.storebrand.healthcheck.CheckSpecification;
+import com.storebrand.healthcheck.HealthCheckMetadata;
+import com.storebrand.healthcheck.HealthCheckRegistry;
+import com.storebrand.healthcheck.Responsible;
+import com.storebrand.healthcheck.impl.HealthCheckRegistryImpl.HealthCheckResult;
+import com.storebrand.healthcheck.impl.Status.StatusWithAxes;
 
 
 /**
