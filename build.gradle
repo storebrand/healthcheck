@@ -22,7 +22,7 @@ wrapper {
 
 allprojects {
     group = 'com.storebrand.healthcheck'
-    version = '0.4.0+2023-04-25'
+    version = '0.4.1-SNAPSHOT'
 }
 
 subprojects {
