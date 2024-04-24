@@ -336,7 +336,12 @@ public class HealthCheckRegistryImpl implements HealthCheckRegistry {
             throw new HealthChecksNotRunningException();
         }
 
-        HealthCheckReportDto.ServiceInfoDto serviceInfo = _serviceInfo.getServiceInfo();
+        // :: Get service info
+        // Due to the cost of calculating this, we allow the caller to exclude it. This is useful for probes that only
+        // need the readiness or liveness status.
+        HealthCheckReportDto.ServiceInfoDto serviceInfo = createReportRequest.shouldExcludeServiceInfo()
+                ? null
+                : _serviceInfo.getServiceInfo();
 
         // :: Get Statuses for from all health check runners
         List<HealthCheckResult> statuses = new ArrayList<>();

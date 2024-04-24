@@ -76,24 +76,31 @@ public class HealthCheckTextOutput implements HealthCheckOutput {
                 dto.axes.activated.stream(),
                 dto.healthChecks.stream().map(status -> status.runStatus)));
 
-        out.println("Project name:       " + dto.service.project.name);
-        out.println("Project version:    " + dto.service.project.version);
-        out.println("Host name:          " + dto.service.host.name
-                + " (" + dto.service.host.primaryAddress + ")");
+        // Only show service info if the DTO contains this information
+        if (dto.service != null) {
+            out.println("Project name:       " + dto.service.project.name);
+            out.println("Project version:    " + dto.service.project.version);
+            out.println("Host name:          " + dto.service.host.name
+                    + " (" + dto.service.host.primaryAddress + ")");
 
-        dto.service.properties.forEach(property ->
-                out.printf("%-20s%s\n", property.displayName.orElse(property.name) + ":", property.value));
+            dto.service.properties.forEach(property ->
+                    out.printf("%-20s%s\n", property.displayName.orElse(property.name) + ":", property.value));
 
-        Instant jvmStartTime = dto.service.runningSince;
-        LocalDateTime startTime = LocalDateTime.ofInstant(jvmStartTime, ZoneId.systemDefault());
-        String startDateTime = startTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            Instant jvmStartTime = dto.service.runningSince;
+            LocalDateTime startTime = LocalDateTime.ofInstant(jvmStartTime, ZoneId.systemDefault());
+            String startDateTime = startTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
-        Instant nowInstant = dto.service.timeNow;
-        LocalDateTime nowTime = LocalDateTime.ofInstant(nowInstant, ZoneId.systemDefault());
-        Duration runningTime = Duration.between(dto.service.runningSince, dto.service.timeNow);
-        String uptime = DurationFormatter.format(runningTime);
-        out.println("Time now:           " + nowTime.format(DateTimeFormatter.ISO_DATE_TIME));
-        out.println("Running since:      " + startDateTime + " (" + uptime + ")");
+            Instant nowInstant = dto.service.timeNow;
+            LocalDateTime nowTime = LocalDateTime.ofInstant(nowInstant, ZoneId.systemDefault());
+            Duration runningTime = Duration.between(dto.service.runningSince, dto.service.timeNow);
+            String uptime = DurationFormatter.format(runningTime);
+            out.println("Time now:           " + nowTime.format(DateTimeFormatter.ISO_DATE_TIME));
+            out.println("Running since:      " + startDateTime + " (" + uptime + ")");
+        }
+        else {
+            out.println("Service info excluded in this report");
+        }
+
         out.println("Data freshness:     " + (dto.synchronous
                 ? "Updated synchronous"
                 : "Retrieved from cache (Updates async in background threads)"));

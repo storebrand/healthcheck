@@ -282,6 +282,7 @@ public interface HealthCheckRegistry {
     class CreateReportRequest {
         private Collection<Axis> _axes = Collections.emptyList(); // Empty -> no filtering.
         private boolean _forceFreshData = false;
+        private boolean _excludeServiceInfo = false;
         private final Set<String> _excludeChecks = new TreeSet<>();
         private final List<Predicate<RegisteredHealthCheck>> _filters = new ArrayList<>();
 
@@ -298,6 +299,16 @@ public interface HealthCheckRegistry {
          */
         public CreateReportRequest excludeChecks(Collection<String> names) {
             _excludeChecks.addAll(names);
+            return this;
+        }
+
+        /**
+         * Do not include Service information in the report. This will allow us to not calculate the field
+         * {@link HealthCheckReportDto#service}, and save some time when generating a report. This is useful if we want
+         * to only check readiness or liveness.
+         */
+        public CreateReportRequest excludeServiceInfo() {
+            _excludeServiceInfo = true;
             return this;
         }
 
@@ -338,7 +349,8 @@ public interface HealthCheckRegistry {
          */
         public static CreateReportRequest readinessStatus() {
             return new CreateReportRequest()
-                    .includeOnlyChecksWithAnyOfTheseAxes(Axis.NOT_READY);
+                    .includeOnlyChecksWithAnyOfTheseAxes(Axis.NOT_READY)
+                    .excludeServiceInfo();
         }
 
         /**
@@ -351,7 +363,8 @@ public interface HealthCheckRegistry {
          */
         public static CreateReportRequest livenessStatus() {
             return new CreateReportRequest()
-                    .includeOnlyChecksWithAnyOfTheseAxes(Axis.REQUIRES_REBOOT);
+                    .includeOnlyChecksWithAnyOfTheseAxes(Axis.REQUIRES_REBOOT)
+                    .excludeServiceInfo();
         }
 
         /**
@@ -393,6 +406,10 @@ public interface HealthCheckRegistry {
 
         public boolean shouldForceFreshData() {
             return _forceFreshData;
+        }
+
+        public boolean shouldExcludeServiceInfo() {
+            return _excludeServiceInfo;
         }
     }
 }
