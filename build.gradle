@@ -84,9 +84,10 @@ subprojects {
     // Maven Central publishing configuration, via Sonatype
 
     signing {
-        def signingKeyId = findProperty("signingKeyId") as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
-        def signingKey = findProperty("signingKey") as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
-        def signingPassword = findProperty("signingPassword") as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
+        // using findProperty(..) to be able to build without it being defined.
+        def signingKeyId = findProperty("signingKeyId") as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT_"
+        def signingKey = findProperty("signingKey") as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT_"
+        def signingPassword = findProperty("signingPassword") as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT_"
         useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
 
         sign publishing.publications
@@ -130,18 +131,16 @@ subprojects {
             maven {
                 name 'SonatypeOSSRHSnapshot'
                 // NOTE: GroupId no.storebrand uses "oss.sonatype.org", while com.storebrand uses "s01.oss.sonatype.org"
-                // url 'https://oss.sonatype.org/content/repositories/snapshots'
                 url 'https://s01.oss.sonatype.org/content/repositories/snapshots'
                 credentials {
                     // using findProperty(..) to be able to build without it being defined.
-                    username findProperty('sonatypeUsername') as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
-                    password findProperty('sonatypePassword') as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
+                    username findProperty('sonatypeUsername') as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT_"
+                    password findProperty('sonatypePassword') as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT_"
                 }
             }
             maven {
                 name 'SonatypeOSSRHStaging'
                 // NOTE: GroupId no.storebrand uses "oss.sonatype.org", while com.storebrand uses "s01.oss.sonatype.org"
-                // url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
                 url 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2'
                 credentials {
                     // using findProperty(..) to be able to build without it being defined.
