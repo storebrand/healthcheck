@@ -33,6 +33,7 @@ public class ServiceInfoFactory extends AbstractFactoryBean<ServiceInfo> {
     @Inject
     private Optional<InfoPropertiesSupplier> _infoPropertiesSupplier;
 
+    @SuppressWarnings("this-escape") // setSingleton is the inherited Spring API for declaring scope; safe in our usage.
     public ServiceInfoFactory() {
         setSingleton(true);
     }
