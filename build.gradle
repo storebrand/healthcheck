@@ -16,7 +16,7 @@
 
 // GradleWrapper version specifier.
 wrapper {
-    gradleVersion = "7.5.1"
+    gradleVersion = "9.5.1"
     setDistributionType(Wrapper.DistributionType.ALL)
 }
 
@@ -32,9 +32,6 @@ subprojects {
     apply plugin: 'signing'
     apply plugin: 'maven-publish'
 
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-
     compileJava {
         options.encoding = 'UTF-8'
         options.deprecation = true
@@ -43,6 +40,8 @@ subprojects {
     }
 
     java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
         withJavadocJar()
         withSourcesJar()
     }
@@ -68,7 +67,7 @@ subprojects {
         mockitoVersion = '5.3.1'
     }
 
-    project.buildDir = 'build-gradle'
+    layout.buildDirectory = layout.projectDirectory.dir('build-gradle')
 
     repositories { mavenCentral() }
 
