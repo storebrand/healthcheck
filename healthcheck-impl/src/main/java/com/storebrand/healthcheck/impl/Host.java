@@ -126,7 +126,7 @@ final class Host {
 
         // :: Try to determine hostname by using the 'hostname' command
         try {
-            Process proc = Runtime.getRuntime().exec("hostname");
+            Process proc = Runtime.getRuntime().exec(new String[] { "hostname" });
             try (InputStreamReader in = new InputStreamReader(proc.getInputStream(), StandardCharsets.UTF_8);
                  BufferedReader br = new BufferedReader(in)) {
                 // Read the first line trimmed, which will be the hostname as returned by the executable. We would not

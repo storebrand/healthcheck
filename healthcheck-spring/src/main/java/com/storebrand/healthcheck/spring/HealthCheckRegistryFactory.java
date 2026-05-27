@@ -50,6 +50,7 @@ public class HealthCheckRegistryFactory extends AbstractFactoryBean<HealthCheckR
     @Inject
     private ServiceInfo _serviceInfo;
 
+    @SuppressWarnings("this-escape") // setSingleton is the inherited Spring API for declaring scope; safe in our usage.
     public HealthCheckRegistryFactory() {
         setSingleton(true);
     }
