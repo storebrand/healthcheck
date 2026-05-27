@@ -83,6 +83,18 @@ public class HealthCheckReportDto {
         public Optional<String> structuredData = Optional.empty();
         /** Status about running time, and any issues encountered while running this check */
         public RunStatusDto runStatus;
+        /**
+         * Each health check has its own background thread that updates the check status. This specifies the interval we
+         * wait between each time we perform an new health check. The default is to wait 10 minutes since the last check
+         * finished. Note that this is the base configuration, and the interval might be higher if the status is non-ok.
+         */
+        public long intervalInNs;
+        /**
+         * By default, we will mark health checks as slow if they use more than 4 seconds to respond. If you know the
+         * expected maximum runtime for this check in seconds you can override this by setting a value here. The check will
+         * set {@link RunStatusDto#slow} to true if the check is using more time than expected.
+         */
+        public long expectedMaximumRunTimeInNs;
     }
 
     /**
@@ -129,6 +141,11 @@ public class HealthCheckReportDto {
          * Or is there something in the check that is hanging?
          */
         public boolean stale;
+        /**
+         * If this run did not activate any axes, and none of the other flags are set, then this is set to true. This
+         * indicates that the check ran successfully, and did not find any issues.
+         */
+        public boolean ok;
     }
 
     /**

@@ -88,13 +88,13 @@ public class ServiceInfo {
 
             memoryDto.systemFree = OptionalLong.of(osmxbean.getFreePhysicalMemorySize());
 
-            Double system = osmxbean.getSystemCpuLoad();
-            Double process = osmxbean.getProcessCpuLoad();
+            double system = osmxbean.getSystemCpuLoad();
+            double process = osmxbean.getProcessCpuLoad();
             // CPU Load is a double in range [0.0, 1.0].
             // If the value is negative not available, and we default to null instead.
             // As NaN is not a valid JSON we also set that to null.
-            loadDto.system = (system < 0) || system.isNaN() ? OptionalDouble.empty() : OptionalDouble.of(system);
-            loadDto.process = (process < 0) || process.isNaN() ? OptionalDouble.empty() : OptionalDouble.of(process);
+            loadDto.system = (system < 0) || Double.isNaN(system) ? OptionalDouble.empty() : OptionalDouble.of(system);
+            loadDto.process = (process < 0) || Double.isNaN(process) ? OptionalDouble.empty() : OptionalDouble.of(process);
         }
 
         HealthCheckReportDto.ServiceInfoDto dto = new HealthCheckReportDto.ServiceInfoDto();

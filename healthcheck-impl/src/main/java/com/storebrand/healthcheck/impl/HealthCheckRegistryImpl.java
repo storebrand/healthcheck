@@ -576,6 +576,8 @@ public class HealthCheckRegistryImpl implements HealthCheckRegistry {
         dto.type = Optional.ofNullable(metadata.type);
         dto.onBehalfOf = Optional.ofNullable(metadata.onBehalfOf);
         dto.axes = axesToDto(result.getAggregatedAxes());
+        dto.intervalInNs = TimeUnit.SECONDS.toNanos(result.getMetadata().intervalInSeconds);
+        dto.expectedMaximumRunTimeInNs = TimeUnit.SECONDS.toNanos(result.getMetadata().expectedMaximumRunTimeInSeconds);
 
         dto.runStatus = new RunStatusDto();
         dto.runStatus.runningTimeInNs = result.getRunningTimeInNs();
@@ -591,6 +593,7 @@ public class HealthCheckRegistryImpl implements HealthCheckRegistry {
             dto.axes.activated = new TreeSet<>(dto.axes.activated);
             dto.axes.activated.add(Axis.SYS_STALE);
         }
+        dto.runStatus.ok = result.isOk();
         dto.runStatus.slow = result.isSlow();
         dto.runStatus.crashed = result.isCrashed();
 

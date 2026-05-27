@@ -290,7 +290,6 @@ public class HealthCheckInstanceRunner implements RegisteredHealthCheck {
         HealthCheckResult result = _healthCheckInstance.performHealthCheck();
         updateLastResult(result);
         _latch.countDown();
-        // If the status is not OK we should log it.
         if (!result.isOk()) {
             _healthCheckLogger.logHealthCheckResult(
                     HealthCheckRegistryImpl.healthCheckResultToDto(result, _clock.instant()));
