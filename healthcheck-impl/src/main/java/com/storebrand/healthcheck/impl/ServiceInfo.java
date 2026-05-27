@@ -86,9 +86,9 @@ public class ServiceInfo {
         if (ManagementFactory.getOperatingSystemMXBean() instanceof OperatingSystemMXBean) {
             OperatingSystemMXBean osmxbean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
 
-            memoryDto.systemFree = OptionalLong.of(osmxbean.getFreePhysicalMemorySize());
+            memoryDto.systemFree = OptionalLong.of(osmxbean.getFreeMemorySize());
 
-            Double system = osmxbean.getSystemCpuLoad();
+            Double system = osmxbean.getCpuLoad();
             Double process = osmxbean.getProcessCpuLoad();
             // CPU Load is a double in range [0.0, 1.0].
             // If the value is negative not available, and we default to null instead.
