@@ -28,6 +28,7 @@ dependencies  {
     implementation "org.springframework:spring-tx:$springVersion"
 
     implementation "javax.inject:javax.inject:$javaxInjectVersion"
+    implementation "javax.annotation:javax.annotation-api:$javaxAnnotationVersion"
 
     // === TESTING:
     testImplementation project(':healthcheck-scanner')
