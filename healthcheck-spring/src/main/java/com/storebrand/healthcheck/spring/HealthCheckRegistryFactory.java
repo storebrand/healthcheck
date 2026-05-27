@@ -24,6 +24,8 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.helpers.BasicMarkerFactory;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 import com.storebrand.healthcheck.HealthCheckLogger;
@@ -93,8 +95,11 @@ public class HealthCheckRegistryFactory extends AbstractFactoryBean<HealthCheckR
                 body = body.substring(0, charLength) + " (...) CHOPPED by Health check logger. Above " + charLength
                         + " chars limit.";
             }
-            log.warn("HealthCheck [" + dto.name + "] returned activated axes [" + dto.axes.activated.toString()
-                            + "] of specified axes [" + dto.axes.specified.toString() + "]:\n" + body);
+            BasicMarkerFactory basicMarkerFactory = new BasicMarkerFactory();
+            Marker healthCheckNameMarker = basicMarkerFactory.getMarker("HealthCheck.name");
+            log.warn(healthCheckNameMarker, "HealthCheck [" + dto.name + "] returned activated axes ["
+                    + dto.axes.activated.toString() + "] of specified axes ["
+                    + dto.axes.specified.toString() + "]:\n" + body);
         }
     }
 }
