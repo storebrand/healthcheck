@@ -26,13 +26,9 @@ dependencies {
     testRuntimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            pom {
-                name = 'Storebrand HealthCheck Implementation'
-                description = 'Storebrand HealthCheck implementation of the HealthCheck API'
-            }
-        }
+mavenPublishing {
+    pom {
+        name = 'Storebrand HealthCheck Implementation'
+        description = 'Storebrand HealthCheck implementation of the HealthCheck API'
     }
 }

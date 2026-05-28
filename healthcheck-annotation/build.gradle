@@ -18,13 +18,9 @@ dependencies {
     api project(':healthcheck-api')
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            pom {
-                name = 'Storebrand HealthCheck Annotations'
-                description = 'Storebrand HealthCheck annotations used to resolve health check methods'
-            }
-        }
+mavenPublishing {
+    pom {
+        name = 'Storebrand HealthCheck Annotations'
+        description = 'Storebrand HealthCheck annotations used to resolve health check methods'
     }
 }

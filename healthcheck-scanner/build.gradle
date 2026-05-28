@@ -29,13 +29,9 @@ dependencies {
     testRuntimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            pom {
-                name = 'Storebrand HealthCheck Scanner'
-                description = 'Storebrand HealthCheck scanner for detecting annotated health check methods'
-            }
-        }
+mavenPublishing {
+    pom {
+        name = 'Storebrand HealthCheck Scanner'
+        description = 'Storebrand HealthCheck scanner for detecting annotated health check methods'
     }
 }
