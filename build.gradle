@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+plugins {
+    // Sonatype Central Publishing Portal publishing. Applied (not just declared)
+    // in each subproject below. See PublishToMaven.md for the release procedure.
+    id 'com.vanniktech.maven.publish' version '0.36.0' apply false
+}
+
 // GradleWrapper version specifier.
 wrapper {
     gradleVersion = "9.5.1"
@@ -29,8 +35,7 @@ subprojects {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
     apply plugin: 'java-library'
-    apply plugin: 'signing'
-    apply plugin: 'maven-publish'
+    apply plugin: 'com.vanniktech.maven.publish'
 
     compileJava {
         options.encoding = 'UTF-8'
@@ -42,8 +47,6 @@ subprojects {
     java {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
-        withJavadocJar()
-        withSourcesJar()
     }
 
     javadoc {
@@ -81,76 +84,54 @@ subprojects {
     }
 
     // ------------------------------------------------------------------------------------------
-    // Maven Central publishing configuration, via Sonatype
+    // Maven Central publishing — via Sonatype Central Publishing Portal.
+    //
+    // Credentials & signing key are read from Gradle properties (or ORG_GRADLE_PROJECT_* env vars):
+    //   mavenCentralUsername / mavenCentralPassword  → Central Portal user token (NOT login pw)
+    //   signingInMemoryKeyId / signingInMemoryKey / signingInMemoryKeyPassword  → ASCII-armored GPG
+    //
+    // Tasks:
+    //   ./gradlew publishToMavenCentral             — uploads; -SNAPSHOT goes straight to the
+    //                                                 Central snapshot repo, releases land in a
+    //                                                 staging deployment awaiting manual Publish
+    //                                                 at https://central.sonatype.com
+    //   ./gradlew publishAndReleaseToMavenCentral   — same, but auto-clicks Publish for releases
+    //
+    // The plugin auto-configures the JavaLibrary publication (sources + javadoc jars) from the
+    // java-library plugin; we only supply POM metadata and toggle signing.
+    mavenPublishing {
+        publishToMavenCentral()
+        signAllPublications()
 
-    signing {
-        // using findProperty(..) to be able to build without it being defined.
-        def signingKeyId = findProperty("signingKeyId") as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT_"
-        def signingKey = findProperty("signingKey") as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT_"
-        def signingPassword = findProperty("signingPassword") as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT_"
-        useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
-
-        sign publishing.publications
-    }
-
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                pom {
-                    name = 'Storebrand HealthCheck'
-                    description = 'Java library that makes it easy to report the current health of a service.'
-                    url = 'https://github.com/storebrand/healthcheck'
-                    licenses {
-                        license {
-                            name = 'Apache License 2.0'
-                            url = 'https://www.apache.org/licenses/LICENSE-2.0'
-                        }
-                    }
-                    developers {
-                        developer {
-                            id = 'stolsvik'
-                            name = 'Endre Stølsvik'
-                            email = 'endre@stolsvik.com'
-                        }
-                        developer {
-                            id = 'khiim'
-                            name = 'Kristian Hiim'
-                            email = 'kristian@hiim.no'
-                        }
-                    }
-                    scm {
-                        connection = 'scm:git:https://github.com/storebrand/healthcheck.git'
-                        developerConnection = 'scm:git:ssh://github.com:storebrand/healthcheck.git'
-                        url = 'https://github.com/storebrand/healthcheck'
-                    }
-                }
-                from components.java
-            }
-        }
-        repositories {
-            maven {
-                name 'SonatypeOSSRHSnapshot'
-                // NOTE: GroupId no.storebrand uses "oss.sonatype.org", while com.storebrand uses "s01.oss.sonatype.org"
-                url 'https://s01.oss.sonatype.org/content/repositories/snapshots'
-                credentials {
-                    // using findProperty(..) to be able to build without it being defined.
-                    username findProperty('sonatypeUsername') as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT_"
-                    password findProperty('sonatypePassword') as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT_"
+        pom {
+            name = 'Storebrand HealthCheck'
+            description = 'Java library that makes it easy to report the current health of a service.'
+            inceptionYear = '2022'
+            url = 'https://github.com/storebrand/healthcheck'
+            licenses {
+                license {
+                    name = 'Apache License 2.0'
+                    url = 'https://www.apache.org/licenses/LICENSE-2.0'
+                    distribution = 'https://www.apache.org/licenses/LICENSE-2.0'
                 }
             }
-            maven {
-                name 'SonatypeOSSRHStaging'
-                // NOTE: GroupId no.storebrand uses "oss.sonatype.org", while com.storebrand uses "s01.oss.sonatype.org"
-                url 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2'
-                credentials {
-                    // using findProperty(..) to be able to build without it being defined.
-                    username findProperty('sonatypeUsername') as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
-                    password findProperty('sonatypePassword') as String ?: "Either project prop, or env with prefix ORG_GRADLE_PROJECT"
+            developers {
+                developer {
+                    id = 'stolsvik'
+                    name = 'Endre Stølsvik'
+                    email = 'endre@stolsvik.com'
                 }
+                developer {
+                    id = 'khiim'
+                    name = 'Kristian Hiim'
+                    email = 'kristian@hiim.no'
+                }
+            }
+            scm {
+                connection = 'scm:git:https://github.com/storebrand/healthcheck.git'
+                developerConnection = 'scm:git:ssh://github.com:storebrand/healthcheck.git'
+                url = 'https://github.com/storebrand/healthcheck'
             }
         }
     }
-    // "Alias-tasks" to publish to Sonatype's OSSRH (OSS Repository Hosting), Snapshot and Staging
-    task publishSnapshot(dependsOn: [publishAllPublicationsToSonatypeOSSRHSnapshotRepository])
-    task publishStaging(dependsOn: [publishAllPublicationsToSonatypeOSSRHStagingRepository])
 }

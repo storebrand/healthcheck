@@ -1,4 +1,9 @@
-name: Build and Publish to OSSRH Staging
+name: Build and Publish to Maven Central
+
+# Uploads to the Sonatype Central Publishing Portal via the com.vanniktech.maven.publish
+# plugin. SNAPSHOT versions are published directly to the Central snapshot repo. Release
+# versions land in a staging deployment and require a manual "Publish" click at
+# https://central.sonatype.com — see PublishToMaven.md for the full release procedure.
 
 on:
   workflow_dispatch:
@@ -20,10 +25,15 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Build with Gradle
-        run: ./gradlew clean build publishStaging
+        run: ./gradlew clean build publishToMavenCentral
         env:
-          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.CENTRAL_SONATYPEUSERNAME }}
-          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.CENTRAL_SONATYPEPASSWORD }}
-          ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.CENTRAL_SIGNINGKEYID }}
-          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.CENTRAL_SIGNINGPASSWORD }}
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.CENTRAL_SIGNINGKEY }}
+          # Central Portal user token — generate at https://central.sonatype.com under
+          # "View Account" → "Generate User Token". Must be a Portal token; OSSRH tokens
+          # will return 401.
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          # ASCII-armored GPG signing key (gpg --export-secret-keys --armor <keyid>) and
+          # its short key id + passphrase.
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.CENTRAL_SIGNINGKEYID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.CENTRAL_SIGNINGPASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.CENTRAL_SIGNINGKEY }}
