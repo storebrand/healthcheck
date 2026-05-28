@@ -17,13 +17,10 @@
 package com.storebrand.healthcheck.spring;
 
 import java.time.Clock;
-import java.util.Optional;
-
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 import com.storebrand.healthcheck.HealthCheckLogger;
@@ -42,13 +39,12 @@ import com.storebrand.healthcheck.output.HealthCheckTextOutput;
 public class HealthCheckRegistryFactory extends AbstractFactoryBean<HealthCheckRegistryImpl> {
     private static final Logger log = LoggerFactory.getLogger(HealthCheckRegistryFactory.class);
 
-    @Inject
-    private Optional<Clock> _clock;
-    @Inject
-    private Optional<HealthCheckLogger> _healthCheckLogger;
-
-    @Inject
+    @Autowired
     private ServiceInfo _serviceInfo;
+    @Autowired(required = false)
+    private Clock _clock;
+    @Autowired(required = false)
+    private HealthCheckLogger _healthCheckLogger;
 
     @SuppressWarnings("this-escape") // setSingleton is the inherited Spring API for declaring scope; safe in our usage.
     public HealthCheckRegistryFactory() {
@@ -61,15 +57,24 @@ public class HealthCheckRegistryFactory extends AbstractFactoryBean<HealthCheckR
     }
 
     @Override
-    protected HealthCheckRegistryImpl createInstance() {
-        Clock clock = _clock.orElse(Clock.systemDefaultZone());
-        HealthCheckLogger logger = _healthCheckLogger.orElse(new DefaultSlf4jHealthCheckLogger());
+    public void afterPropertiesSet() throws Exception {
+        if (_clock == null) {
+            _clock = Clock.systemDefaultZone();
+        }
+        if (_healthCheckLogger == null) {
+            _healthCheckLogger = new DefaultSlf4jHealthCheckLogger();
+        }
 
-        return new HealthCheckRegistryImpl(clock, logger, _serviceInfo);
+        super.afterPropertiesSet();
     }
 
-    @PreDestroy
-    public void stopHealthChecks() {
+    @Override
+    protected HealthCheckRegistryImpl createInstance() {
+        return new HealthCheckRegistryImpl(_clock, _healthCheckLogger, _serviceInfo);
+    }
+
+    @Override
+    public void destroy() throws Exception {
         try {
             getObject().shutdown();
         }
@@ -79,6 +84,7 @@ public class HealthCheckRegistryFactory extends AbstractFactoryBean<HealthCheckR
             // case it becomes an issue.
             log.warn("Error stopping async health checks and shutting down HealthCheckRegistry", e);
         }
+        super.destroy();
     }
 
     public static class DefaultSlf4jHealthCheckLogger implements HealthCheckLogger {

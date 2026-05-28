@@ -16,10 +16,7 @@
 
 package com.storebrand.healthcheck.spring;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 import com.storebrand.healthcheck.HealthCheckRegistry.InfoPropertiesSupplier;
@@ -27,11 +24,10 @@ import com.storebrand.healthcheck.impl.ServiceInfo;
 
 public class ServiceInfoFactory extends AbstractFactoryBean<ServiceInfo> {
 
-    @Inject
-    private Optional<HealthCheckSettings> _healthCheckSettings;
-
-    @Inject
-    private Optional<InfoPropertiesSupplier> _infoPropertiesSupplier;
+    @Autowired(required = false)
+    private HealthCheckSettings _healthCheckSettings;
+    @Autowired(required = false)
+    private InfoPropertiesSupplier _infoPropertiesSupplier;
 
     @SuppressWarnings("this-escape") // setSingleton is the inherited Spring API for declaring scope; safe in our usage.
     public ServiceInfoFactory() {
@@ -44,9 +40,17 @@ public class ServiceInfoFactory extends AbstractFactoryBean<ServiceInfo> {
     }
 
     @Override
+    public void afterPropertiesSet() throws Exception {
+        if (_healthCheckSettings == null) {
+            _healthCheckSettings = new SimpleHealthCheckSettings();
+        }
+
+        super.afterPropertiesSet();
+    }
+
+    @Override
     protected ServiceInfo createInstance() {
-        HealthCheckSettings settings = _healthCheckSettings.orElseGet(SimpleHealthCheckSettings::new);
-        return new ServiceInfo(settings.getProjectName(), settings.getProjectVersion(),
-                _infoPropertiesSupplier.orElse(null));
+        return new ServiceInfo(_healthCheckSettings.getProjectName(), _healthCheckSettings.getProjectVersion(),
+                _infoPropertiesSupplier);
     }
 }
