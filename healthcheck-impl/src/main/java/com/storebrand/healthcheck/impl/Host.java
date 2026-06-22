@@ -136,7 +136,11 @@ final class Host {
         }
         // CHECKSTYLE IGNORE check FOR NEXT 1 LINES: "Catching Throwable is not allowed" - but I am the boss. -est
         catch (Throwable t) {
-            log.info("Failed to determine hostname by using 'hostname' command.", t);
+            // There is no need to log the actual throwable here. This will always fail in Kubernetes if the hostname
+            // executable is not available, and putting "Cannot run program 'hostname', No such file or directory" in
+            // the logs gives no additional value.
+            log.info("Could not determine hostname by using 'hostname' command."
+                    + " Will use InetAddress.getLocalHost().getHostName() instead.");
         }
 
         // :? Did the hostname command return a blankk/null hostname?
